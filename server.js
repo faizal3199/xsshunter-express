@@ -5,21 +5,16 @@ const get_app_server = require('./app.js');
 const database = require('./database.js');
 const database_init = database.database_init;
 
-if(!process.env.SSL_CONTACT_EMAIL) {
-    console.error(`[ERROR] The environment variable 'SSL_CONTACT_EMAIL' is not set, please set it.`);
-    process.exit();
-}
-
 (async () => {
 	// Ensure database is initialized.
+	console.log("Connecting to database...");
 	await database_init();
+	console.log("Connected!!");
 
 	const app = await get_app_server();
 
-	require('greenlock-express').init({
-	    packageRoot: __dirname,
-	    configDir: './greenlock.d',
-	    cluster: false,
-	   	maintainerEmail: process.env.SSL_CONTACT_EMAIL,
-	}).serve(app);
+	console.log("Starting server...");
+	app.listen(80, () => {
+		console.log(`Server listening on port 80`);
+	  });
 })();
