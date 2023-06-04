@@ -312,7 +312,7 @@ async function get_app_server() {
 
         res.send(XSS_PAYLOAD.replace(
             /\[HOST_URL\]/g,
-            `https://${process.env.HOSTNAME}`
+            `//${process.env.HOSTNAME}`
         ).replace(
             '[COLLECT_PAGE_LIST_REPLACE_ME]',
             JSON.stringify(pages_to_collect)
