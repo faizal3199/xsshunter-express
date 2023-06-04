@@ -7,6 +7,9 @@ services:
       # [REQUIRED] The hostname/domain pointed to 
       # the IP of the server running this service. 
       - HOSTNAME=your.host.name
+      # Set to https if you using a reverse proxy with SSL
+      # Else leave as http
+      - HOST_PROTOCOL=http
       # Maximum XSS callback payload size
       # This includes the webpage screenshot, DOM HTML,
       # page text, and other metadata. Note that if the

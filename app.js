@@ -235,7 +235,7 @@ async function get_app_server() {
 
 		// Send out notification via configured notification channel
 		if(process.env.SMTP_EMAIL_NOTIFICATIONS_ENABLED === "true") {
-			payload_fire_data.screenshot_url = `https://${process.env.HOSTNAME}/screenshots/${payload_fire_data.screenshot_id}.png`;
+			payload_fire_data.screenshot_url = `${process.env.HOST_PROTOCOL}://${process.env.HOSTNAME}/screenshots/${payload_fire_data.screenshot_id}.png`;
 			await notification.send_email_notification(payload_fire_data);
 		}
 	});
@@ -312,7 +312,7 @@ async function get_app_server() {
 
         res.send(XSS_PAYLOAD.replace(
             /\[HOST_URL\]/g,
-            `//${process.env.HOSTNAME}`
+            `${process.env.HOST_PROTOCOL}://${process.env.HOSTNAME}`
         ).replace(
             '[COLLECT_PAGE_LIST_REPLACE_ME]',
             JSON.stringify(pages_to_collect)
