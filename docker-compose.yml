@@ -35,7 +35,11 @@ services:
       - DATABASE_NAME=xsshunterexpress
       - DATABASE_USER=xsshunterexpress
       - DATABASE_PASSWORD=xsshunterexpress
-      - DATABASE_HOST=postgresdb
+      - DATABASE_HOST=mysqldb
+      # Set to mysql or postgres
+      - DATABASE_TYPE=mysql
+      # SSL for MySQL database
+      - DATABASE_SSL=false
       - NODE_ENV=production
     ports:
       - "80:80"
@@ -45,7 +49,22 @@ services:
     # Comment out if you're using an external SQL
     # server and have commented out the DB section.
     depends_on:
-      - postgresdb
+      - mysqldb
+  # MySQL server to store injection data (not including
+  # screenshots which are stored separately).
+  # NOTE: If you're using an external SQL server, you can comment
+  # out this service.
+  mysqldb:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: xsshunterexpress
+      MYSQL_DATABASE: xsshunterexpress
+      MYSQL_USER: xsshunterexpress
+      MYSQL_PASSWORD: xsshunterexpress
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'no'
+    volumes:
+      - ./mysql-db-data:/var/lib/mysql
   # Postgres server to store injection data (not including
   # screenshots which are stored separately).
   # NOTE: If you're using an external SQL server, you can comment
@@ -53,17 +72,17 @@ services:
   # WARNING: This database gives the "postgres" user admin priveleges
   # with a default password of "xsshunterexpress". Do not expose it
   # externally. If you do, be sure to change the password.
-  postgresdb:
-    image: postgres
-    restart: always
-    environment:
-      # This is a volume mounted into the container
-      # (see the directory ./postgres-db-data)
-      # So the database will be persisted across
-      # container deletion.
-      PGDATA: /var/lib/postgresql/data/pgdata
-      POSTGRES_USER: xsshunterexpress
-      POSTGRES_DB: xsshunterexpress
-      POSTGRES_PASSWORD: xsshunterexpress
-    volumes:
-      - ./postgres-db-data:/var/lib/postgresql/data/pgdata
+  # postgresdb:
+  #   image: postgres
+  #   restart: always
+  #   environment:
+  #     # This is a volume mounted into the container
+  #     # (see the directory ./postgres-db-data)
+  #     # So the database will be persisted across
+  #     # container deletion.
+  #     PGDATA: /var/lib/postgresql/data/pgdata
+  #     POSTGRES_USER: xsshunterexpress
+  #     POSTGRES_DB: xsshunterexpress
+  #     POSTGRES_PASSWORD: xsshunterexpress
+  #   volumes:
+  #     - ./postgres-db-data:/var/lib/postgresql/data/pgdata

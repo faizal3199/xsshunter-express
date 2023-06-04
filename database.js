@@ -5,17 +5,35 @@ const get_secure_random_string = require('./utils.js').get_secure_random_string;
 const get_hashed_password = require('./utils.js').get_hashed_password;
 const constants = require('./constants.js');
 
+const databaseSSL = process.env.DATABASE_SSL === 'true';
 const sequelize = new Sequelize(
 	process.env.DATABASE_NAME,
 	process.env.DATABASE_USER,
 	process.env.DATABASE_PASSWORD,
 	{
 		host: process.env.DATABASE_HOST,
-		dialect: 'postgres',
+		dialect: process.env.DATABASE_TYPE,
 		benchmark: true,
-		logging: true
+		logging: true,
+		dialectOptions: {
+			ssl: databaseSSL ? { rejectUnauthorized: true } : false,
+		},
 	},
 );
+
+const setLengthForIndex = (colName) => {
+	const mysqlKeyLengthParam =
+		process.env.DATABASE_TYPE === "mysql"
+			? {
+				length: 255,
+			}
+			: {};
+
+	return {
+		name: colName,
+		...mysqlKeyLengthParam
+	};
+};
 
 const Model = Sequelize.Model;
 
@@ -37,7 +55,7 @@ Settings.init({
 	},
 	// Setting name
 	key: {
-		type: Sequelize.TEXT,
+		type: Sequelize.STRING(255),
 		allowNull: true,
 		unique: true
 	},
@@ -52,7 +70,7 @@ Settings.init({
 	indexes: [
 		{
 			unique: true,
-			fields: ['key'],
+			fields: [setLengthForIndex('key')],
 			method: 'BTREE',
 		}
 	]
@@ -159,37 +177,37 @@ PayloadFireResults.init({
 	indexes: [
 		{
 			unique: false,
-			fields: ['url'],
+			fields: [setLengthForIndex('url')],
 			method: 'BTREE',
 		},
 		{
 			unique: false,
-			fields: ['ip_address'],
+			fields: [setLengthForIndex('ip_address')],
 			method: 'BTREE',
 		},
 		{
 			unique: false,
-			fields: ['referer'],
+			fields: [setLengthForIndex('referer')],
 			method: 'BTREE',
 		},
 		{
 			unique: false,
-			fields: ['user_agent'],
+			fields: [setLengthForIndex('user_agent')],
 			method: 'BTREE',
 		},
 		{
 			unique: false,
-			fields: ['cookies'],
+			fields: [setLengthForIndex('cookies')],
 			method: 'BTREE',
 		},
 		{
 			unique: false,
-			fields: ['title'],
+			fields: [setLengthForIndex('title')],
 			method: 'BTREE',
 		},
 		{
 			unique: false,
-			fields: ['origin'],
+			fields: [setLengthForIndex('origin')],
 			method: 'BTREE',
 		},
 		{
@@ -229,7 +247,7 @@ CollectedPages.init({
 	indexes: [
 		{
 			unique: false,
-			fields: ['uri'],
+			fields: [setLengthForIndex('uri')],
 			method: 'BTREE',
 		}
 	]
@@ -287,7 +305,7 @@ InjectionRequests.init({
 	indexes: [
 		{
 			unique: true,
-			fields: ['injection_key'],
+			fields: [setLengthForIndex('injection_key')],
 			method: 'BTREE',
 		}
 	]

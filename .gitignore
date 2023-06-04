@@ -2,6 +2,7 @@
 node_modules/*
 *.bak
 postgres-db-data/*
+mysql-db-data/*
 dev.sh
 .DS_Store
 front-end/run.sh
